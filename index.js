@@ -7,8 +7,16 @@ var createEsnextPreprocessor = function(args, config, logger, helper) {
   var options = helper.merge({}, args.options || {}, config.options || {});
 
   return function(content, file, done) {
+    var code;
     log.debug('Processing "%s"', file.originalPath);
-    return done(null, esnext.compile(content, options).code);
+
+    try {
+      code = esnext.compile(content, options).code;
+      done(null, code);
+    } catch(e) {
+      log.error(e);
+      done(e, null);
+    }
   };
 };
 
